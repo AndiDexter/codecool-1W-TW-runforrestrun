@@ -1,0 +1,20 @@
+var backgr = createSprite(200, 200);
+backgr.setAnimation("background");
+var tree = createSprite(50,300);
+tree.setAnimation("tree");
+tree.scale = 0.8 ;
+function draw() {
+if (keyWentDown("space")) {
+  tree.velocityY = - 6;
+}
+if (tree.y<100) {
+  tree.velocityY = 6;
+
+}
+if (tree.y>300) {
+  tree.velocityY = 0;
+  tree.y = 300;
+}
+
+drawSprites();
+}
