@@ -1,20 +1,223 @@
-var backgr = createSprite(200, 200);
+var backgr = createSprite(200, 220);
 backgr.setAnimation("background");
+
 var tree = createSprite(50,300);
 tree.setAnimation("tree");
-tree.scale = 0.8 ;
+tree.scale = 0.5 ;
+
+var ccool = createSprite(200, 200);
+ccool.setAnimation("ccool");
+ccool.x = 400;
+ccool.y = randomNumber(75, 380);
+ccool.velocityX = randomNumber(-6, -3);
+ccool.scale = 0.13;
+
+var gameover = createSprite(200,200);
+gameover.setAnimation("textGameOver_1");
+gameover.scale = 0.8;
+
+
+var clock = createSprite(200, 200);
+clock.setAnimation("clock");
+clock.x = 700;
+clock.y = randomNumber(75, 380);
+clock.velocityX = randomNumber(-6, -3);
+clock.scale = 0.1;
+ 
+var bogdan = createSprite(200, 200); 
+bogdan.setAnimation("bogdan");
+bogdan.x = 1200;
+bogdan.y = randomNumber(75, 380);
+bogdan.velocityX = randomNumber(-6, -3);
+bogdan.scale = 1.5;
+
+var corina = createSprite(200, 200); 
+corina.setAnimation("corina");
+corina.x = 325;
+corina.y = 315;
+corina.scale = 2.2;
+                         
+var start = createSprite(200,220);
+start.setAnimation("start");
+start.height = 400;
+start.width = 400;
+
+var knowledge = 0;
+var lives = 2;
+
 function draw() {
+  background("black");
+
+ 
+// objects movements
+
+    ccool.rotation = ccool.rotation +3;
+    
+  if (ccool.x < -50) {
+    ccool.play();
+    ccool.x = 400;
+    ccool.y = randomNumber(60,380);
+    ccool.velocityX = randomNumber(-5, -3);
+    ccool.velocityY = 0;
+  }
+    if (bogdan.x < -80) {
+    bogdan.play();
+    bogdan.x = 400;
+    bogdan.y = randomNumber(60,380);
+    bogdan.velocityX = randomNumber(-5, -3);
+    bogdan.velocityY = 0;
+  }
+    if (clock.x < -50) {
+    clock.play();
+    clock.x = 400;
+    clock.y = randomNumber(60,380);
+    clock.velocityX = randomNumber(-5, -3);
+    clock.velocityY = 0;
+  }
+
+// tree movements 
+
 if (keyWentDown("space")) {
-  tree.velocityY = - 6;
+  playSound("sound://default.mp3", false);
+  tree.velocityY = - 11;
 }
+
 if (tree.y<100) {
-  tree.velocityY = 6;
+  tree.velocityY = 11;
 
 }
 if (tree.y>300) {
   tree.velocityY = 0;
   tree.y = 300;
+
+}
+if (keyDown("right")) {
+  tree.x = tree.x + 3;
+
+}
+if (keyDown("left")) {
+  tree.x = tree.x - 3 ;
 }
 
+// tree interacting with objects
+
+if (tree.isTouching(bogdan)) {
+   playSound("sound://category_collect/energy_bar_recharge_4.mp3", false);
+   bogdan.x = 2200;
+   bogdan.y = randomNumber(60,380);
+   knowledge = knowledge + 20;
+   lives = lives + 1;
+ }
+ if (tree.isTouching(ccool)){
+    playSound("sound://category_collect/clicky_crunch.mp3", false);
+    ccool.x = 400;
+    ccool.y = randomNumber(60,380);
+    knowledge = knowledge + 5;
+ }
+ if (tree.isTouching(clock)) {
+      playSound("sound://category_collect/vibrant_game_cute_pick_up_1.mp3", false); 
+      clock.x = 700;
+      clock.y = randomNumber(60,360);
+      lives = lives - 1;
+    }
+    
+// start menu
+
+if (mousePressedOver(start)) {
+     start.destroy();   }
+if (start.overlap(tree)){
+    knowledge = 0;
+    lives = 2;
+}
+
+// game levels
+
+  if (knowledge>99){
+    ccool.velocityX = randomNumber(-8, -7);
+    bogdan.velocityX = randomNumber(-8, -7);
+    clock.velocityX = randomNumber(-8, -7);
+  }
+  if (knowledge>199){
+    ccool.velocityX = randomNumber(-11, -9);
+    bogdan.velocityX = randomNumber(-11, -9);
+    clock.velocityX = randomNumber(-11, -9);
+  }
+    if (knowledge>299){
+    ccool.velocityX = randomNumber(-13, -11);
+    bogdan.velocityX = randomNumber(-13, -11);
+    clock.velocityX = randomNumber(-13, -11);
+    
+  }
+  if (knowledge>399){
+    ccool.velocityX = randomNumber(-15, -12);
+    bogdan.velocityX = randomNumber(-13, -12);
+    clock.velocityX = randomNumber(-15, -12);
+    
+  }
+
+  
+// win game
+
+  if (knowledge > 499) {
+    background("deepskyblue");
+    fill("white");
+    stroke("Navy");
+    strokeWeight(6);
+    textFont("Courier New Bold");
+    textSize(40);
+    textAlign(200, 200);
+    text("C O N G R A T S !", randomNumber(58,62), randomNumber(148,152));
+    textSize(22);
+    text("Forrest is now a Codecooler!", 15,250);
+    text("Now it's your turn!", 50, 300);
+    corina.visible = true;
+    backgr.destroy();
+    tree.destroy();
+    clock.destroy();
+    bogdan.destroy();
+    ccool.destroy();
+  } else {
+    corina.visible=false;
+  }
+  
+// game over
+
+  if (lives < 1) {
+    background("black");
+   
+    
+    gameover.visible = true;
+    gameover.x = randomNumber(198,202);
+    gameover.y = randomNumber(198,202);
+    
+    fill("crimson");
+    noStroke();
+    strokeWeight(1);
+    textFont("Courier New Bold");
+    textSize(40);
+    textAlign(200, 200);
+    textSize(25);
+    text("Don't give up champ!", 115, 300);
+    text("Collecting all the knowledge takes time.", 45, 330);
+    backgr.destroy();
+    tree.destroy();
+    clock.destroy();
+    bogdan.destroy();
+    ccool.destroy();
+  } else {
+    gameover.visible = false;
+  }
+ 
+// score and lives 
+ textSize(20);
+ stroke("white");
+  fill("Orange");
+  textFont("Dribble");
+  text("Knowledge: " + knowledge, 15, 15);
+  text("Lives: " + lives, 300, 15); 
+  
+  if (lives>5) {
+    lives = 5;
+  }
 drawSprites();
 }
